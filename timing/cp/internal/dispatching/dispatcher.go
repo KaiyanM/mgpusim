@@ -9,6 +9,7 @@ import (
 	"github.com/sarchlab/akita/v3/tracing"
 	"github.com/sarchlab/mgpusim/v3/kernels"
 	"github.com/sarchlab/mgpusim/v3/protocol"
+	"github.com/sarchlab/mgpusim/v3/samplinglib"
 	"github.com/sarchlab/mgpusim/v3/timing/cp/internal/resource"
 )
 
@@ -113,6 +114,15 @@ func (d *DispatcherImpl) Tick(now sim.VTimeInSec) (madeProgress bool) {
 	return madeProgress
 }
 
+func (d *DispatcherImpl) collectSamplingData(locations []protocol.WfDispatchLocation) {
+	if *samplinglib.SampledRunnerFlag {
+		for _, l := range locations {
+			wavefront := l.Wavefront
+			samplinglib.Sampledengine.Collect(wavefront.Issuetime, wavefront.Finishtime)
+		}
+	}
+}
+
 func (d *DispatcherImpl) processMessagesFromCU(now sim.VTimeInSec) bool {
 	msg := d.dispatchingPort.Peek()
 	if msg == nil {
@@ -123,9 +133,11 @@ func (d *DispatcherImpl) processMessagesFromCU(now sim.VTimeInSec) bool {
 	case *protocol.WGCompletionMsg:
 		count := 0
 		for _, rspToID := range msg.RspTo {
-			_, ok := d.inflightWGs[rspToID]
+			location, ok := d.inflightWGs[rspToID]
 			if ok {
 				count += 1
+				///sampling
+				d.collectSamplingData(location.locations)
 			}
 		}
 
