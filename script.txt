@@ -1,0 +1,88 @@
+(command1 ; command2) &
+
+.\fir -timing -length=16777216 --report-all
+
+ aes bfs bitonicsort concurrentkernel conv2d fastwalshtransform floydwarshall im2col kmeans matrixmultiplication matrixtranspose memcopy nbody nw pagerank relu simpleconvolution spmv stencil2d xor
+
+ @echo off
+setlocal enabledelayedexpansion
+
+REM List of folders
+set folders=aes bfs bitonicsort concurrentkernel conv2d fastwalshtransform floydwarshall im2col kmeans matrixmultiplication matrixtranspose memcopy nbody nw pagerank relu simpleconvolution spmv stencil2d xor
+
+REM Loop through the folders and run the command
+for %%f in (%folders%) do (
+    cd "%%f"
+    .\%%f -timing -length=16777216 --report-all
+    cd ..
+)
+
+
+set folders=bfs bitonicsort concurrentkernel conv2d fastwalshtransform
+set folders=floydwarshall im2col kmeans matrixmultiplication matrixtranspose 
+set folders=memcopy nbody nw pagerank relu 
+set folders=simpleconvolution spmv stencil2d xor
+
+cd Documents\GitHub\mgpusim\samples
+
+.\aes.exe -timing -length=33554432 --report-all
+.\bfs.exe -node=2097152 -timing --report-all
+.\bitonicsort.exe -timing -length=131072 --report-all
+.\conv2d.exe -H=1024 -W=1024 -timing --report-all
+
+.\fastwalshtransform.exe -length=524288 --report-all
+.\fir.exe -timing -length=16777216 --report-all
+.\floydwarshall.exe -node=512 -timing --report-all
+.\im2col.exe -H=1424 -W=1424 -timing --report-all
+.\kmeans.exe -points = 65536 -timing --report-all
+.\matrixmultiplication.exe -x=1100 -y=1100 -z=1100 -timing --report-all
+.\matrixtranspose.exe -width=8192 -timing --report-all
+.\nbody.exe -iter=2048 -timing --report-all  
+.\nw.exe -length=2048 -timing --report-all
+.\pagerank.exe -node=16384 -timing --report-all
+.\spmv.exe -dim=32768 -timing --report-all
+.\stencil2d.exe -row=100000 -timing --report-all
+
+v buildL1VCaches +256
+
+
+cd Documents\GitHub\mgpusim\samples
+
+cd aes
+.\aes.exe -timing -length=33554432 --report-all
+cd ..
+.\bfs.exe -node=2097152 -timing --report-all
+cd ..
+.\bitonicsort.exe -timing -length=131072 --report-all
+cd ..
+.\conv2d.exe -H=1024 -W=1024 -timing --report-all
+
+
+
+
+cd fastwalshtransform 
+.\fastwalshtransform.exe -length=524288 --report-all
+cd ..\fir
+.\fir.exe -timing -length=16777216 --report-all
+cd ..\floydwarshall
+.\floydwarshall.exe -node=512 -timing --report-all
+cd ..\im2col
+.\im2col.exe -H=1424 -W=1424 -timing --report-all
+
+cd ..\kmeans
+.\kmeans.exe -points=65536 -timing --report-all
+
+cd ..\matrixmultiplication
+.\matrixmultiplication.exe -x=1100 -y=1100 -z=1100 -timing --report-all
+cd ..\matrixtranspose
+.\matrixtranspose.exe -width=8192 -timing --report-all
+cd ..\nbody
+.\nbody.exe -iter=2048 -timing --report-all
+cd ..\nw  
+.\nw.exe -length=2048 -timing --report-all
+cd ..\pagerank
+.\pagerank.exe -node=16384 -timing --report-all
+cd ..\spmv
+.\spmv.exe -dim=32768 -timing --report-all
+cd ..\stencil2d
+.\stencil2d.exe -row=100000 -timing --report-all

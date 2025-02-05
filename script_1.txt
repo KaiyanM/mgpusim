@@ -1,0 +1,47 @@
+(command1 ; command2) &
+
+.\fir -timing -length=16777216 --report-all
+
+ aes bfs bitonicsort concurrentkernel conv2d fastwalshtransform floydwarshall im2col kmeans matrixmultiplication matrixtranspose memcopy nbody nw pagerank relu simpleconvolution spmv stencil2d xor
+
+ @echo off
+setlocal enabledelayedexpansion
+
+REM List of folders
+set folders=aes bfs bitonicsort concurrentkernel conv2d fastwalshtransform floydwarshall im2col kmeans matrixmultiplication matrixtranspose memcopy nbody nw pagerank relu simpleconvolution spmv stencil2d xor
+
+REM Loop through the folders and run the command
+for %%f in (%folders%) do (
+    cd "%%f"
+    .\%%f -timing -length=16777216 --report-all
+    cd ..
+)
+
+
+set folders=bfs bitonicsort concurrentkernel conv2d fastwalshtransform
+set folders=floydwarshall im2col kmeans matrixmultiplication matrixtranspose 
+set folders=memcopy nbody nw pagerank relu 
+set folders=simpleconvolution spmv stencil2d xor
+
+cd Documents\GitHub\mgpusim\samples
+
+.\aes -timing -length=33554432 --report-all
+.\bfs.exe -node=256 -timing --report-all
+.\bitonicsort.exe -timing -length=1048576 --report-all
+.\conv2d.exe -H=56 -W=56 -timing --report-all
+.\floydwarshall.exe -node=64 -timing --report-all
+
+.\im2col.exe -H=56 -W=56 -timing --report-all
+.\kmeans.exe -points = 2048 -timing --report-all
+
+.\matrixmultiplication.exe -x=256 -y=256 -z=256 -timing --report-all
+.\matrixtranspose.exe -width=1024 -timing --report-all
+
+.\nbody.exe -iter=2048 -timing --report-all  
+
+.\nw.exe -length=256 -timing --report-all
+
+.\pagerank.exe -node=64 -timing --report-all
+
+.\spmv.exe -dim=256 -timing --report-all
+.\stencil2d.exe -row=1024 -timing --report-all

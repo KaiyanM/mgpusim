@@ -377,7 +377,7 @@ func (b *shaderArrayBuilder) buildL1SReorderBuffer(sa *shaderArray) {
 	builder := rob.MakeBuilder().
 		WithEngine(b.engine).
 		WithFreq(b.freq).
-		WithBufferSize(128).
+		WithBufferSize(16).
 		WithNumReqPerCycle(4)
 
 	name := fmt.Sprintf("%s.L1SROB", b.name)

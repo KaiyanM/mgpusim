@@ -1,0 +1,237 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-11-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## old
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(ggplot2)
+library(readxl)
+library(tidyverse)
+```
+
+```{r}
+funclist <- dir()
+dir0 <- "C:/Users/kaiiy/Documents/GitHub/mgpusim/samples/已跑完"
+
+funcpath=paste0(dir0,"/",funclist[1])
+list_csv_files <- list.files(funcpath,pattern='*.csv')
+
+library(readr) 
+paste0(funcpath,"/",list_csv_files)
+
+df <- read_csv(paste0(funcpath,"/",list_csv_files), id = "file_name")
+
+```
+```{r}
+funclist <- dir()
+funclist <- funclist[funclist!="plots.Rmd"]
+datalist <- list()
+
+
+# Function to extract only the numbers between "/" and "." using sub()
+extract_number <- function(path) {
+  # Use sub() to capture only the numbers between "/" and "."
+  extracted <- sub(".*/([0-9]+)\\..*", "\\1", path)
+  return(as.numeric(extracted))  # Optionally, convert to numeric
+}
+
+
+for (i in 1:length(funclist)) {
+  funcpath<- paste0("./",funclist[i])
+  list_csv_files <- list.files(funcpath,pattern='*.csv')
+  csvpath<- paste0(funcpath,"/",list_csv_files)
+  df <- read_csv(csvpath, id = "file_name")
+  
+  df$file_name <- extract_number(df$file_name)
+  colnames(df)[1:2] <- c("Parameter","No")
+  df <- df %>%
+    mutate(simulation = funclist[i])
+  datalist[[i]]<-df
+}
+
+datalist[[3]]
+```
+
+```{r}
+
+summary(datalist[[2]])
+
+
+
+```
+
+```{r}
+long_df <- do.call(rbind, datalist) 
+
+head(long_df)
+```
+
+```{r}
+#0 1 2 3 5 指数
+#4 6 不变或下降，还有先升高后下降
+long_df_filter<- long_df|>
+  filter(No==6)|>
+  ggplot(aes(x=Parameter, y=value,fill = simulation)) + 
+    geom_bar(stat='identity')+
+  facet_wrap(. ~ simulation,scales = "free")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+
+long_df_filter
+```
+
+
+
+
+
+## +-变化
+
+```{r cars}
+library(ggplot2)
+library(tidyverse)
+library(readr) 
+library(dplyr)
+```
+
+```{r}
+#basename(list.dirs())
+
+#namelist = c('aes','bfs','bitonicsort','conv2d','fir','floydwarshall','im2col','kmeans','matrixmultiplication','matrixtranspose','nbody','nw','pagerank','spmv','stencil2d')
+
+
+changelist = c('aes','matrixtranspose','nbody','pagerank','spmv')
+
+```
+
+```{r}
+# Load necessary libraries
+combined_rows_all <- data.frame()
+for (i in 1:5) {
+  path <- paste0("./",changelist[1])
+  # Define the path to your directory containing the files
+  
+  # List all files that match the patterns
+  file_list <- list.files(path, pattern = "^(buildL1SReorderBuffer_WithBufferSize|benchmark).*\\.csv$", full.names = TRUE)
+  
+  # Initialize an empty data frame to store combined rows
+  combined_rows <- data.frame()
+  
+  # Loop through each file
+  for (file in file_list) {
+    # Read the CSV file
+    data <- read.csv(file, header = TRUE)[2,]
+    
+    data$filename <- basename(file)
+    data$folder <- changelist[i]
+    
+    combined_rows <- rbind(combined_rows, data)
+  }
+  combined_rows_all <- rbind(combined_rows_all,combined_rows)
+}
+
+
+combined_rows_all$change_value <- ifelse(
+  grepl("^benchmark", combined_rows_all$filename), 0,  # Assign 0 if the filename starts with "benchmark"
+  ifelse(
+    grepl("^buildL1SReorderBuffer_WithBufferSize\\+", combined_rows_all$filename),  # If filename starts with "buildL1SReorderBuffer_WithBufferSize+"
+    as.numeric(sub("\\.csv$", "", sub("buildL1SReorderBuffer_WithBufferSize\\+", "", combined_rows_all$filename))),  # Remove ".csv" and extract the number after "+"
+    ifelse(
+      grepl("^buildL1SReorderBuffer_WithBufferSize\\-", combined_rows_all$filename),  # If filename starts with "buildL1SReorderBuffer_WithBufferSize-"
+      as.numeric(sub("\\.csv$", "", sub("buildL1SReorderBuffer_WithBufferSize\\-", "-", combined_rows_all$filename))),  # Remove ".csv" and extract the number after "-"
+      NA  # Default to NA for filenames not matching any pattern
+    )
+  )
+)
+
+
+
+ggplot(combined_rows_all, aes(x = factor(change_value), y = as.numeric(value), fill = folder)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() + # Flips the axes for a double-sided appearance
+  scale_y_continuous(labels = abs, breaks = seq(-max(abs(data$value)), max(abs(data$value)), by = 5)) +
+  labs(
+    title = "Double-Sided Bar Chart",
+    x = "Change Value",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+```
+
+
+```{r}
+
+funcpath=paste0("./",namelist[1])
+
+
+list_csv_files <- list.files(funcpath,pattern='*.csv')
+list_csv_files
+
+paste0(funcpath,"/",list_csv_files)
+
+pickwhattime <- 2 
+
+'''
+1:driver kernel_time 
+2:driver total_time
+3:GPU[1].CommandProcessor	kernel_time
+'''
+
+df <- read_csv(paste0(funcpath,"/",list_csv_files[1]), id = "file_name")[pickwhattime,]
+df
+```
+```{r}
+funclist <- dir()
+funclist <- funclist[funclist!="plots.Rmd"]
+datalist <- list()
+
+
+# Function to extract only the numbers between "/" and "." using sub()
+extract_number <- function(path) {
+  # Use sub() to capture only the numbers between "/" and "."
+  extracted <- sub(".*/([0-9]+)\\..*", "\\1", path)
+  return(as.numeric(extracted))  # Optionally, convert to numeric
+}
+
+
+for (i in 1:length(funclist)) {
+  funcpath<- paste0("./",funclist[i])
+  list_csv_files <- list.files(funcpath,pattern='*.csv')
+  csvpath<- paste0(funcpath,"/",list_csv_files)
+  df <- read_csv(csvpath, id = "file_name")
+  
+  df$file_name <- extract_number(df$file_name)
+  colnames(df)[1:2] <- c("Parameter","No")
+  df <- df %>%
+    mutate(simulation = funclist[i])
+  datalist[[i]]<-df
+}
+
+datalist[[3]]
+```
+```{r}
+```
+
+
+
+
+
+
+
+
+
