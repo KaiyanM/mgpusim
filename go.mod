@@ -42,8 +42,8 @@ require (
 
 // replace github.com/syifan/goseth => ../goseth
 
-// replace github.com/sarchlab/akita/v4 => ../akita
+replace github.com/sarchlab/akita/v4 => ../akitartm_controlled_tracing
 
-go 1.22.0
+go 1.23
 
-toolchain go1.22.6
+toolchain go1.23.6
