@@ -43,6 +43,8 @@ require (
 
 replace github.com/sarchlab/akita/v4 => ../akitartm_controlled_tracing
 
+replace github.com/sarchlab/akita/v3 => ../akita
+
 go 1.23
 
 toolchain go1.23.6
