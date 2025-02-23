@@ -41,9 +41,9 @@ require (
 
 // replace github.com/syifan/goseth => ../goseth
 
-replace github.com/sarchlab/akita/v4 => ../akitartm_controlled_tracing
+// replace github.com/sarchlab/akita/v3 => ../akitartm_controlled_tracing [for v3:load github; v4:load local]
 
-replace github.com/sarchlab/akita/v3 => ../akita
+replace github.com/sarchlab/akita/v4 => ../akitartm_controlled_tracing
 
 go 1.23
 
