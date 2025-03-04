@@ -41,7 +41,7 @@ require (
 
 // replace github.com/syifan/goseth => ../goseth
 
-// replace github.com/sarchlab/akita/v3 => ../akitartm_controlled_tracing [for v3:load github; v4:load local]
+// [for v3: load github; for v4: load local]
 
 replace github.com/sarchlab/akita/v4 => ../akitartm_controlled_tracing
 
